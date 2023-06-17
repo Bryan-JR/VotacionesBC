@@ -18,12 +18,65 @@ export default defineComponent({
   },
 
   methods: {
-    mensaje(){
+    async mensaje(){
+      const usuario = {
+        identificacion: 641054863,
+        nombre: "Sebastian",
+        apellido1: "Ruiz",
+        apellido2: "Sierra",
+        contraseña: "Sr.641054863",
+        numero_celular: "304 678 9231"
+      }
+
+      const data = {
+        tabla: "usuario",
+        keys: Object.keys(usuario),
+        values: Object.values(usuario)
+      }
       const instance = axios.create({ baseURL: 'http://localhost:4000'})
-      instance.get('/usuario')
+      await instance.post('/guardar', data)
       .then(res => {
         console.log(res);
       })
+      .catch(error => {
+        console.log(error);
+      });
+      
+      await instance.get('/usuario/641054863')
+      .then( res => {
+        console.log(res);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+      usuario.nombre = "Juan";
+      data.values = Object.values(usuario);
+
+      await instance.put('/actualiza/641054863', data)
+      .then( res => {
+        console.log(res);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+      await instance.get('/usuario/641054863')
+      .then( res => {
+        console.log(res);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+      await instance.delete('/eliminar/usuario/641054863')
+      .then( res => {
+        console.log(res);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
     }
   }
 });

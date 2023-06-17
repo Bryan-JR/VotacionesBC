@@ -1,14 +1,16 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-import { Route } from "./routes/usuarioRoutes.js";
+import bodyParser from "body-parser"
+import { Route } from "./routes/Routes.js";
 
 //import { DAO } from "./models/DAO.js";
 
 const app = express();
 app.use(cors());
 app.use(morgan("dev"));
-app.use(express.json())
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 
 // app.get('/', (req, res) => {
