@@ -84,11 +84,47 @@ const upCenso = async (req, res) => {
     });
 };
 
+const getLogin = async (req, res) => {
+    const id = req.body.id;
+    const pass = req.body.pass;
+    data.tabla = "usuario";
+    data.keyId = "identificacion";
+    Model.forId(id, data, (err, resp) => {
+        if(err){
+            res.send(err);
+        } else {
+            if(resp.length==0){//Comprueba que el usuario existe
+                res.send("noExiste");
+            } else {
+                if(resp[0].contraseña===pass){ //Se comparan las contraseñas para ver si concuerdan
+                    //Se comprueba si es administrador quien intenta iniciar sesión
+                    data.tabla = "administrador";
+                    Model.forId(id, data, (error, respu) => { //Respuesta de la tabla administrador
+                        if(error){
+                            res.send(error);
+                        } else {
+                            if(respu.length==0){
+                                res.send('inicio');
+                            } else {
+                                res.send('admin');
+                            }
+                        }
+                    });
+                } else {
+                    res.send("incorrecta");
+                }
+            }
+            
+        }
+    });
+};
+
 export const Controllers = {
     all: getAll,
     forId: getId,
     into: setData,
     update: setUpdate,
     remove: getRemove,
-    saveCenso: upCenso
+    saveCenso: upCenso,
+    login: getLogin
 }

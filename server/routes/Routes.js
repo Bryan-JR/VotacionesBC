@@ -9,6 +9,7 @@ router.post('/guardar', Controllers.into);
 router.delete('/eliminar/:tabla/:id', Controllers.remove);
 router.put('/actualiza/:id', Controllers.update);
 router.post('/censo', Controllers.saveCenso);
+router.post('/login', Controllers.login);
 
 
 export const Route = router;

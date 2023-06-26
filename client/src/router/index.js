@@ -1,25 +1,47 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import InicioView from '../views/InicioView.vue'
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView
+    component: InicioView
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+    path: '/admin',
+    name: 'InicioAdmin',
+    component: () => import('../views/InicioAdminView.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/usuario',
+    name: 'InicioUsuario',
+    component: () => import('../views/InicioUserView.vue'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/admin/convocatorias',
+    name: 'ConvocatoriasAdmin',
+    component: () => import('../views/ConvocatoriasAdmin.vue'),
+    meta: { requiresAuth: true }
   }
 ]
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
-})
+});
 
-export default router
+router.beforeEach((to, from, next) => {
+  const log = { ...JSON.parse(localStorage.getItem("log"))};
+  const isAuthenticated = log.log;
+  const type = log.type;
+  if(to.meta.requiresAuth && !isAuthenticated) {
+    next('/');
+  } else {
+    if(type=="usuario" && to.path == "/admin") next('/usuario');
+    else next();
+  }
+});
+
+export default router;
