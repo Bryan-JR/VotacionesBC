@@ -11,7 +11,8 @@ const getId = (id, data) => {
 };
 
 const setData = (data) =>{
-    return typeof data.values[0] != "number" ? 
+    console.log(data.values);
+    return typeof data.values[0] != "number" && data.tabla=="usuario" ? 
     `INSERT INTO ${clear(data.tabla)} (${data.keys.map(key => `\`${clear(key)}\``).join(', ')}) VALUES ${data.values.map(row => Object.values(row).map((value, i) => typeof value === 'string' ? `'${clear(value)}'` 
      : 
      `${i == ''  ? '(' : '' }${clear(value)}`).join(', ') ).join('), ')})`
