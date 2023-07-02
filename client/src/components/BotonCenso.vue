@@ -46,16 +46,16 @@ export default {
           this.cargarCenso(file);
         }
       },
-      cargarCenso(file){
-        Papa.parse(file, {
+      async cargarCenso(file){
+        await Papa.parse(file, {
           header: true,
           dynamicTyping: true,
-          complete: function(resultado) {
+          complete: async function(resultado) {
             this.datos = resultado.data;
             this.datos.splice(this.datos.length-1, 1)
             console.log(this.datos);
             
-            let vecUsuario = this.datos.map(obj => ({
+            let vecUsuario = await this.datos.map(obj => ({
               "identificacion": obj.identificacion,
               "nombre": obj.nombre,
               "apellido1": obj.apellido1,
@@ -64,7 +64,7 @@ export default {
               "numero_celular": obj.numero_celular,
               "contraseña": obj.contraseña
             }));
-            let vecEstudiantes = this.datos.map(obj => ({
+            let vecEstudiantes = await this.datos.map(obj => ({
               "identificacion": obj.identificacion,
               "facultad": obj.facultad,
               "programa": obj.programa,
@@ -84,14 +84,12 @@ export default {
               keys: Object.keys(vecUsuario[0]),
               values: Object.values(vecUsuario)
             };
-            console.log(this.usuarios);
 
             this.estudiantes = {
               tabla: "estudiante",
               keys: Object.keys(vecEstudiantes[0]),
               values: Object.values(vecEstudiantes)
             };
-            console.log(this.estudiantes);
             
             this.body = {
               usuarios: this.usuarios, 
@@ -101,11 +99,25 @@ export default {
           }
         });
          
-        this.axios.post('/censo', JSON.parse(localStorage.getItem('body')))
-        .then( res => {
+        await this.axios.post('/censo', await JSON.parse(localStorage.getItem('body')))
+        .then(async res => {
           localStorage.removeItem('body');
           console.log(res);
-          this.$swal.fire({icon: 'succes', title:'Archivo cargado', text: 'Los datos fueron cargados correctamente'})
+          let msg = await res.data;
+          await this.$swal.fire({
+          timer: 3000,
+          timerProgressBar: true,
+          didOpen: () => {
+              this.$swal.showLoading()
+          }
+          }).then((result) => {
+          /* Read more about handling dismissals below */
+          if (result.dismiss === this.$swal.DismissReason.timer) {
+              this.mostrar = true;
+          }
+          })
+          if (msg=="cargado") this.$swal.fire({icon: 'success', title:'Archivo cargado', text: 'Los datos fueron cargados correctamente'});
+          else if (msg=="error") this.$swal.fire({icon: 'error', title:'Archivo no fue cargado', text: 'Intentelo nuevamente.'});
         })
         .catch( error => {
           console.log(error);

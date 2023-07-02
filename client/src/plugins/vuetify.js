@@ -5,11 +5,21 @@ import 'vuetify/styles'
 // Vuetify
 import { createVuetify  } from 'vuetify'
 import { VExpansionPanels, VExpansionPanel, VExpansionPanelTitle, VExpansionPanelText } from 'vuetify/lib/components/index.mjs';
-import { VDataTable } from 'vuetify/labs/components'
+import { VDataTable, VDataTableVirtual } from 'vuetify/labs/components'
 
 export default createVuetify({
   components: {
     VExpansionPanels, VExpansionPanel, VExpansionPanelTitle, VExpansionPanelText,
-    VDataTable,
+    VDataTable, VDataTableVirtual,
+  },
+  theme: {
+    themes: {
+      light: {
+        colors: {
+          primary: '#008000',
+          secondary: '#5CBBF6',
+        },
+      },
+    },
   },
 })

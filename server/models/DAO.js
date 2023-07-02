@@ -11,8 +11,7 @@ const getId = (id, data) => {
 };
 
 const setData = (data) =>{
-    console.log(data.values);
-    return typeof data.values[0] != "number" && data.tabla=="usuario" ? 
+    return (data.tabla=="usuario" || data.tabla=="estudiante") ? 
     `INSERT INTO ${clear(data.tabla)} (${data.keys.map(key => `\`${clear(key)}\``).join(', ')}) VALUES ${data.values.map(row => Object.values(row).map((value, i) => typeof value === 'string' ? `'${clear(value)}'` 
      : 
      `${i == ''  ? '(' : '' }${clear(value)}`).join(', ') ).join('), ')})`
@@ -28,6 +27,14 @@ const setUpdate = (id, data) => {
 
 const getRemove = (id, data) =>{
     return `DELETE FROM ${clear(data.tabla)} WHERE ${clear(data.keyId)} = ${id}`;
+};
+
+const getNatural = (tb1, tb2)=>{
+    return 'SELECT * FROM '+clear(tb1)+' tb1 NATURAL JOIN '+clear(tb2)+' tb2';
+};
+
+const getCandidatos = (idCon, ident) => {
+    return `SELECT * FROM (SELECT * FROM (SELECT * FROM Candidato WHERE idConvocatoria = ${idCon})al1 INNER JOIN estudiante WHERE identificacion = ${ident == 1 ? 'al1.idEstudiante1' : 'al1.idEstudiante2'})al2 NATURAL JOIN usuario;`
 }
 
 
@@ -36,6 +43,8 @@ export const DAO = {
     forId: getId,
     into: setData,
     update: setUpdate,
-    remove: getRemove
+    remove: getRemove,
+    dosTablas: getNatural,
+    candidatos: getCandidatos,
 }
 

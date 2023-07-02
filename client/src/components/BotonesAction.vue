@@ -48,15 +48,14 @@ export default {
     name: 'BotonesAction',
     data() {
       return {
-        typeUser: JSON.parse(localStorage.getItem("log")).type,
       }
     },
     methods: {
       abrirConvocatorias(){
-        this.$router.push("/"+this.typeUser+"/convocatorias");
+        this.$router.push("/convocatorias");
       },
       abrirElecciones(){
-          this.$router.push("/"+this.typeUser+"/elecciones");
+          this.$router.push("/elecciones");
       }
     },
 }

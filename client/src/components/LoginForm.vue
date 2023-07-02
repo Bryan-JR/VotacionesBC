@@ -69,6 +69,7 @@ export default {
     return {
       user: '',
       password: '',
+      usuario: {},
       snackbar: false,
       text: '...',
       timeout: 2000,
@@ -82,9 +83,27 @@ export default {
     }
   },
   methods: {
+    async getUsuario(){
+      await this.axios.get('/usuario/'+this.user)
+          .then( resp => {
+            this.usuario = resp.data[0];
+          }).
+          catch( err => {
+            console.error(err);
+          });
+          await this.axios.get('/estudiante/'+this.user)
+          .then( res => {
+            this.usuario = {  ...this.usuario, ...res.data[0] }
+            localStorage.setItem("usuario", JSON.stringify(this.usuario));
+            
+          })
+          .catch(er => {
+            console.error(er);
+          });
+    },
     async login(){
       await this.axios.post('/login',{id: this.user, pass: this.password})
-      .then( res => {
+      .then( async res => {
         let msg = res.data;
         if(msg==="admin"){
           this.snackbar = true;
@@ -95,7 +114,9 @@ export default {
             text: 'Puedes votar por un representante'
           });
           localStorage.setItem("log", JSON.stringify({log: true, type: "admin"}));
+          await this.getUsuario();
           this.$router.push("/admin");
+          this.$emit("cargar");
         } else if (msg==="inicio") {
           this.snackbar = true;
           this.text = 'Usuario logeado';
@@ -104,8 +125,10 @@ export default {
             title: 'Inicio como usuario correcto',
             text: 'Puedes votar por un representante'
           });
-          localStorage.setItem("log", JSON.stringify({log: true, type: "usuario"}));
+          localStorage.setItem("log", JSON.stringify({log: true, id: this.user, type: "usuario"}));
+          await this.getUsuario();
           this.$router.push("/usuario");
+          this.$emit("cargar");
         } else if (msg === "incorrecta") {
           this.snackbar = true;
           this.text = 'Contraseña incorrecta';

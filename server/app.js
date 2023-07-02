@@ -9,8 +9,8 @@ import { Route } from "./routes/Routes.js";
 const app = express();
 app.use(cors());
 app.use(morgan("dev"));
-app.use(bodyParser.json({ limit: '10mb' }));
-app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+app.use(bodyParser.json({ limit: '15mb' }));
+app.use(bodyParser.urlencoded({ limit: '15mb', extended: true }));
 
 
 // app.get('/', (req, res) => {

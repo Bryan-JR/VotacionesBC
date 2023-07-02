@@ -24,12 +24,24 @@ const setUpdate = (id, data, callback) => {
 const getRemove = (id, data, callback) =>{
     const query = DAO.remove(id, data);
     db.query(query, callback);
-}
+};
 
+const getDosTablas = (tb1, tb2, callback) => {
+    const query = DAO.dosTablas(tb1, tb2);
+    db.query(query, callback);
+};
+
+const candidatos = (idCon, ident, callback) => {
+    const query = DAO.candidatos(idCon, ident);
+    db.query(query, callback);
+};
+ 
 export const Model = {
     all: getAll,
     forId: getId,
     into: setData,
     update: setUpdate,
-    remove: getRemove
+    remove: getRemove,
+    dosTablas: getDosTablas,
+    getCandidatos: candidatos,
 }

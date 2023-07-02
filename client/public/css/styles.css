@@ -8,17 +8,18 @@
     margin: 0 30px;
     border-bottom: 3px solid #02a50d;
   }
+  
   .panel{
-    margin-top: 20px;
-    margin-bottom: 50px;
-    padding: 50px;
-    max-width: 100%;
-    background-image: url(../img/fondo.png);
-    background-size: cover;
-    background-position: center; /* Centra la imagen en el contenedor */
-    position: sticky;
-    
+      margin-top: 20px;
+      margin-bottom: 50px;
+      padding: 50px;
+      max-width: 100%;
+      background-size: cover;
+      background-position: center; /* Centra la imagen en el contenedor */
+      position: sticky;
+      
   }
+
   .fila{
     margin: 20px 0;
     padding: 0;

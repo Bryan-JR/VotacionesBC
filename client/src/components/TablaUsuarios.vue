@@ -2,13 +2,20 @@
     <v-container>
           <v-card>
             <v-card-title>
-              <v-text-field
-                v-model="search"
-                append-icon="mdi-magnify"
-                label="Buscar"
-                single-line
-                hide-details
-              ></v-text-field>
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    v-model="search"
+                    append-icon="mdi-magnify"
+                    label="Buscar"
+                    single-line
+                    hide-details
+                  ></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-btn @click="reloadTabla()" color="green"><v-icon>mdi-reload</v-icon></v-btn>
+                </v-col>
+              </v-row>
             </v-card-title>
             <v-data-table
               v-model:items-per-page="itemsPerPage"
@@ -53,6 +60,13 @@ export default {
         .catch( error => {
           console.log(error);
         });
+      },
+      reloadTabla(){
+        this.loading = true;
+        setTimeout(() => {
+          this.cargarTabla();
+          this.loading = false;
+        }, 3000);
       }
     },
     mounted() {

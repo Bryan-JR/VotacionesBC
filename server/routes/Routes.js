@@ -10,6 +10,9 @@ router.delete('/eliminar/:tabla/:id', Controllers.remove);
 router.put('/actualiza/:id', Controllers.update);
 router.post('/censo', Controllers.saveCenso);
 router.post('/login', Controllers.login);
+router.get('/tablas/:tab1/:tab2', Controllers.dosTablas);
+router.get('/get/candidatos/:idCon/:ident', Controllers.candidatos);
+router.get('/:tabla/:tipo/:id', Controllers.notificaciones);
 
 
 export const Route = router;

@@ -1,7 +1,7 @@
 <template>
   <div class="about">
     <h2 class="title">VOTACIONES PARA REPRESENTANTE ESTUDIANTIL DE LA UNIVERSIDAD DE CÓRDOBA</h2>
-    <div class="panel">
+    <v-parallax class="panel" src="../../public/img/fondo.png">
       <div class="fila">
         <BotonesAction />
         <BotonCenso />
@@ -9,7 +9,7 @@
       <v-row>
         <TablaUsuarios />
       </v-row>
-    </div>
+    </v-parallax>
   </div>
 </template>
 
@@ -31,5 +31,20 @@
 </script>
 
 <style scoped>
-  
+    .title{
+        text-align: center;
+        padding: 12px 0;
+        margin: 0 30px;
+        border-bottom: 3px solid #02a50d;
+    }
+    .panel{
+        margin-top: 20px;
+        margin-bottom: 50px;
+        padding: 50px;
+        max-width: 100%;
+        background-size: cover;
+        background-position: center; /* Centra la imagen en el contenedor */
+        position: sticky;
+        
+    }
 </style>

@@ -20,10 +20,21 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/admin/convocatorias',
-    name: 'ConvocatoriasAdmin',
-    component: () => import('../views/ConvocatoriasAdmin.vue'),
-    meta: { requiresAuth: true }
+    path: '/convocatorias',
+    name: 'Convocatorias',
+    component: () => import('../views/ConvocatoriasView.vue'),
+  },
+  {
+    path: '/convocatorias/:id',
+    name: 'ConvocatoriaInfo',
+    component: () => import('../views/ParticipaConvocatoria.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/postulados/:idCon',
+    name: 'VerPostulados',
+    component: () => import('../views/PostuladosView.vue'),
+    meta: { requiresAuth: true },
   }
 ]
 
@@ -32,13 +43,13 @@ const router = createRouter({
   routes
 });
 
-router.beforeEach((to, from, next) => {
-  const log = { ...JSON.parse(localStorage.getItem("log"))};
+router.beforeEach(async (to, from, next) => {
+  const log = await { ...JSON.parse(localStorage.getItem("log"))};
   const isAuthenticated = log.log;
   const type = log.type;
-  if(to.meta.requiresAuth && !isAuthenticated) {
-    next('/');
-  } else {
+  if(to.meta.requiresAuth && !isAuthenticated) next('/');
+  else if (to.path=="/"&&isAuthenticated) next('/'+type);
+  else {
     if(type=="usuario" && to.path == "/admin") next('/usuario');
     else next();
   }

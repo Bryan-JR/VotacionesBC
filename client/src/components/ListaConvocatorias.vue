@@ -1,6 +1,7 @@
 <template>
     <v-container>
         <v-btn 
+            v-if="type==='admin'"
             rounded="lg" 
             color="green" 
             size="large" 
@@ -17,7 +18,7 @@
                 <FormConvocatoria @overlay="overlay=false" @listar="cargarConvocatorias()" :convocatoria="convocatoria[0]"/>
             </v-overlay>
         </v-btn>
-        <v-expansion-panels variant="inset" class="my-4">
+        <v-expansion-panels variant="inset" class="my-4" v-if="mostrar">
             <v-expansion-panel
                 v-for="(convocatoria, i) in convocatorias"
                 :key="i"
@@ -28,10 +29,13 @@
                 :title="convocatoria.titulo" 
                 :subtitle="'Desde '+formatFecha(convocatoria.fecha_ini)+' hasta '+formatFecha(convocatoria.fecha_fin)" 
                 :text="convocatoria.descripcion">
-                    <v-card-actions>
-                        <v-btn color="green" append-icon="mdi-face-recognition">VER POSTULADOS</v-btn>
+                    <v-card-actions v-if="type==='admin'">
+                        <v-btn color="green" append-icon="mdi-face-recognition"  @click="$router.push(`/postulados/${convocatoria.idConvocatoria}`)">VER POSTULADOS</v-btn>
                         <v-btn color="green" append-icon="mdi-pencil" @click="getConvocatoria(convocatoria.idConvocatoria)">EDITAR</v-btn>
                         <v-btn color="green" append-icon="mdi-close" @click="eliminar(convocatoria.idConvocatoria)">ELIMINAR</v-btn>
+                    </v-card-actions>
+                    <v-card-actions v-if="type=='usuario'||type=='admin'">
+                        <v-btn color="green" append-icon="mdi-face-recognition" :to="'/convocatorias/'+convocatoria.idConvocatoria">VER CONVOCATORIA</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-expansion-panel-text>
@@ -50,11 +54,13 @@ export default {
             convocatorias: [],
             overlay: false,
             convocatoria: [],
+            mostrar: false,
+            type: JSON.parse(localStorage.getItem("log")).type
         }
     },
     methods: {
-        cargarConvocatorias(){
-            this.axios.get('/convocatoria')
+        async cargarConvocatorias(){
+            await this.axios.get('/convocatoria')
             .then(resp => {
                 this.convocatorias = resp.data;
                 this.overlay = false;
@@ -108,8 +114,19 @@ export default {
             });
         }
     },
-    mounted() {
-        this.cargarConvocatorias();
+    async mounted() {
+        await this.cargarConvocatorias();
+        await this.$swal.fire({
+        timer: 1000,
+        timerProgressBar: true,
+        didOpen: () => {
+            this.$swal.showLoading()
+        }
+        }).then((result) => {
+        if (result.dismiss === this.$swal.DismissReason.timer) {
+            this.mostrar = true;
+        }
+        })
     },
 }
 </script>

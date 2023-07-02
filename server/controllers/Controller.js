@@ -21,7 +21,21 @@ const getAll = async (req, res) => {
 const getId = async (req, res) => {
     const id = req.params.id;
     data.tabla = req.params.tabla;
-    data.keyId = data.tabla === "usuario" ? "identificacion" : `id${data.tabla}`;
+    data.keyId = data.tabla === "usuario" || data.tabla === "estudiante"  ? "identificacion" : `id${data.tabla}`;
+    Model.forId(id, data, (err, resp) => {
+        if(err){
+            res.send(err);
+        } else {
+            res.send(resp);
+        }
+    });
+};
+
+const getNotificaciones = async (req, res) => {
+    const id = req.params.id;
+    data.tabla = req.params.tabla;
+    const tipo = req.params.tipo;
+    data.keyId = tipo === "emisor" ? "idEmisor" : "idReceptor";
     Model.forId(id, data, (err, resp) => {
         if(err){
             res.send(err);
@@ -73,15 +87,21 @@ const getRemove = async (req, res) =>{
 };
 
 const upCenso = async (req, res) => {
-    const usuarios = req.body.usuarios;
-    const estudiantes = req.body.estudiantes;
-    Model.into(usuarios, (err, resp)=>{
-        if(err) res.send(err);
-        else Model.into(estudiantes, (err2, resp2) => {
-            if(err2) res.send(err2);
-            else res.send("Censo cargado.");
+    const body = await { ...req.body };
+    const usuarios = { ...body.usuarios };
+    const estudiantes = { ...body.estudiantes };
+
+    if(usuarios.values===undefined||estudiantes.values===undefined) res.send("error");
+    else {
+        Model.into(usuarios, (err, resp)=>{
+            if(err) console.error("error:" +err);
+            else console.log("cargado");
         });
-    });
+        Model.into(estudiantes, (err, resp) => {
+            if(err) console.error("error:" +err);
+            else res.send("cargado");
+        });
+    }
 };
 
 const getLogin = async (req, res) => {
@@ -119,6 +139,31 @@ const getLogin = async (req, res) => {
     });
 };
 
+const getDosTablas = async (req, res) => {
+    const tb1 = req.params.tab1;
+    const tb2 = req.params.tab2;
+     Model.dosTablas(tb1, tb2, (err, resp) => {
+        if(err){
+            res.send("Error: "+err);
+        } else {
+            res.send(resp);
+        }
+    });
+
+}
+
+const getCandidatos = async (req, res) => {
+    const idCon = req.params.idCon;
+    const ident = req.params.ident;
+    Model.getCandidatos(idCon, ident, (err, resp) => {
+        if(err){
+            res.send("Error: "+err);
+        } else {
+            res.send(resp);
+        }
+    });
+}
+
 export const Controllers = {
     all: getAll,
     forId: getId,
@@ -126,5 +171,8 @@ export const Controllers = {
     update: setUpdate,
     remove: getRemove,
     saveCenso: upCenso,
-    login: getLogin
+    login: getLogin,
+    dosTablas: getDosTablas,
+    notificaciones: getNotificaciones,
+    candidatos: getCandidatos,
 }
