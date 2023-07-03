@@ -1,5 +1,24 @@
 <template>
     <v-container>
+        <v-card>
+            <v-card-title>
+                LOS POSTULADOS PARTICIPAN EN:
+            </v-card-title>
+            <v-card-subtitle>
+                <v-btn @click="connectWallet" v-if="!conectado">Conectar a Metamask</v-btn>
+                <v-chip color="error" v-if="!conectado">Desconectado</v-chip>
+                <v-chip color="primary" v-if="conectado">Conectado: {{ shortAddress }}</v-chip>
+            </v-card-subtitle>
+            <v-card-text>
+                <v-select
+                label="CANDIDATOS PARA:"
+                :items="titulos"
+                item-value="id"
+                item-title="label"
+                v-model="idEle"
+                ></v-select>
+            </v-card-text>
+        </v-card>
         <v-expansion-panels variant="inset" class="my-4" v-if="mostrar">
             <v-expansion-panel
                 v-for="(postu, i) in postulados1" :key="i"
@@ -51,6 +70,10 @@
                             <v-card-text>
                                {{ postu.propuestas }}
                             </v-card-text>
+                            <v-card-actions v-if="conectado">
+                                <v-btn color="error">RECHAZAR</v-btn>
+                                <v-btn color="primary" @click="registrar(`${postu.nombre} ${postu.apellido1} ${postu.apellido2}`, postu.idCandidato)">ACEPTAR</v-btn>
+                            </v-card-actions>
                         </v-card>
                 </v-row>
             </v-expansion-panel-text>
@@ -60,6 +83,8 @@
 </template>
 
 <script>
+import { ethers } from 'ethers';
+
 export default {
     props: [ 'id' ],
     data() {
@@ -68,9 +93,26 @@ export default {
             postulados1: [{nombre: ''}],
             postulados2: [{nombre: ''}],
             mostrar: false,
+            conectado: false,
+            shortAddress: '',
+            wallets: [],
+            elecciones: [],
+            titulos: [],
+            idEle: '',
         }
     },
     methods: {
+        async cargarElecciones(){
+            await this.axios.get('/eleccion')
+            .then(resp => {
+                this.elecciones = resp.data;
+                this.elecciones.splice(0,1);
+                this.titulos = this.elecciones.map(obj => ({id: obj.idEleccion, label:obj.titulo}));
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        },
         async cargarCandidatos(){
             await this.axios.get(`/get/candidatos/${this.idCon}/1`)
             .then(async resp => {
@@ -87,11 +129,60 @@ export default {
             .catch(err => {
                 console.error(err);
             });
+        },
+        async connectWallet() {
+            if (!window.ethereum) {
+                this.$swal.fire({
+                    icon: 'info',
+                    title:'Extensión no Instalada',
+                    html:'<a href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn/related" target="__blank">Descargar aquí</a>'
+                });
+                this.conectado = false;
+                return;
+            }
+            this.wallets = await window.ethereum.request({
+                method: "eth_requestAccounts"
+            });
+            this.conectado = true;
+            const firstPart = this.wallets[0].substring(0,6);
+            const secondPart = this.wallets[0].substring(38, 42);
+            this.shortAddress = `${firstPart}...${secondPart}`;
+        },
+        async getContract() {
+            try {
+                const provider = await new ethers.BrowserProvider(window.ethereum);
+                const signer = await provider.getSigner();
+                const contractAddress = '0xb7a7782Fd8406871741F753aa81B53936206d4d5';
+                const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"string","name":"_name","type":"string"},{"internalType":"uint256","name":"_idProposal","type":"uint256"},{"internalType":"uint256","name":"_idElection","type":"uint256"}],"name":"addProposal","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"getChairPerson","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getLengthProposals","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getProposals","outputs":[{"components":[{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"idProposal","type":"uint256"},{"internalType":"uint256","name":"idElection","type":"uint256"},{"internalType":"uint256","name":"votesCount","type":"uint256"}],"internalType":"struct Vote.Proposal[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getVotesById","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"proposals","outputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"idProposal","type":"uint256"},{"internalType":"uint256","name":"idElection","type":"uint256"},{"internalType":"uint256","name":"votesCount","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint32","name":"index","type":"uint32"}],"name":"vote","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"voters","outputs":[{"internalType":"bool","name":"voted","type":"bool"},{"internalType":"uint256","name":"vote","type":"uint256"}],"stateMutability":"view","type":"function"}];
+                const contract = new ethers.Contract(contractAddress, contractABI, signer);
+                return contract;
+            } catch (error) {
+                console.log(error);
+                console.log("connected contract not found");
+                return null;
+            }
+        },
+        async registrar(nombre, id){
+            try {
+                if(this.idEle!=''){
+                    const conect = await this.getContract();
+                    const registro = await conect.addProposal(nombre, id, this.idEle);
+                    console.log(registro);
+                    const recibe = await registro.wait();
+                    console.log("Transacción minada en el bloque:", recibe.blockNumber);
+                    console.log("Estado de la transacción:", recibe.status);
+                }
+            } catch (error) {
+                console.error(error);
+            }
         }
     },
     async mounted(){
+        await this.cargarElecciones();
         await this.cargarCandidatos();
+        await this.connectWallet();
         await this.$swal.fire({
+        title: "Cargando...",
         timer: 1000,
         timerProgressBar: true,
         didOpen: () => {

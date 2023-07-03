@@ -6,36 +6,35 @@
             color="green" 
             size="large" 
             append-icon="mdi-plus"
-            @click="convocatoria = [{idConvocatoria: '', title: '', descripcion: '', fecha_ini: '', fecha_fin: '', nCandidato: ''}];"
+            @click="eleccion = [{idEleccion: '', title: '', descripcion: '', fecha_ini: '', fecha_fin: ''}];"
         >
-            AÑADIR CONVOCATORIA
+            CREAR ELECCION
             <v-overlay
                 activator="parent"
                 location-strategy="connected"
                 scroll-strategy="block"
                 v-model="overlay"
             >
-                <FormConvocatoria @overlay="overlay=false" @listar="cargarConvocatorias()" :convocatoria="convocatoria[0]"/>
+                <FormEleccion @overlay="overlay=false" @listar="cargarElecciones()" :eleccion="eleccion[0]"/>
             </v-overlay>
         </v-btn>
         <v-expansion-panels variant="inset" class="my-4" v-if="mostrar">
             <v-expansion-panel
-                v-for="(convocatoria, i) in convocatorias"
+                v-for="(eleccion, i) in elecciones"
                 :key="i"
             >
-            <v-expansion-panel-title> {{ convocatoria.titulo }} </v-expansion-panel-title>
+            <v-expansion-panel-title> {{ eleccion.titulo }} </v-expansion-panel-title>
             <v-expansion-panel-text> 
                 <v-card 
-                :title="convocatoria.titulo" 
-                :subtitle="'Desde '+formatFecha(convocatoria.fecha_ini)+' hasta '+formatFecha(convocatoria.fecha_fin)" 
-                :text="convocatoria.descripcion">
+                :title="eleccion.titulo" 
+                :subtitle="'Desde '+formatFecha(eleccion.fecha_ini)+' hasta '+formatFecha(eleccion.fecha_fin)" 
+                :text="eleccion.descripcion">
                     <v-card-actions v-if="type==='admin'">
-                        <v-btn color="green" append-icon="mdi-face-recognition"  @click="$router.push(`/postulados/${convocatoria.idConvocatoria}`)">VER POSTULADOS</v-btn>
-                        <v-btn color="green" append-icon="mdi-pencil" @click="getConvocatoria(convocatoria.idConvocatoria)">EDITAR</v-btn>
-                        <v-btn color="green" append-icon="mdi-close" @click="eliminar(convocatoria.idConvocatoria)">ELIMINAR</v-btn>
+                        <v-btn color="green" append-icon="mdi-pencil" @click="getEleccion(eleccion.idEleccion)">EDITAR</v-btn>
+                        <v-btn color="green" append-icon="mdi-close" @click="eliminar(eleccion.idEleccion)">ELIMINAR</v-btn>
                     </v-card-actions>
                     <v-card-actions v-if="type=='usuario'||type=='admin'">
-                        <v-btn color="green" append-icon="mdi-face-recognition" :to="'/convocatorias/'+convocatoria.idConvocatoria">VER CONVOCATORIA</v-btn>
+                        <v-btn color="green" append-icon="mdi-face-recognition" :to="'/elecciones/'+eleccion.idEleccion">VER ELECCIÓN</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-expansion-panel-text>
@@ -44,25 +43,26 @@
     </v-container>
 </template>
 <script>
-import FormConvocatoria from '../components/FormConvocatoria.vue'
+import FormEleccion from '../components/FormEleccion.vue'
 
 export default {
-    name: 'ListaConvocatorias',
-    components: { FormConvocatoria },
+    name: 'ListaElecciones',
+    components: { FormEleccion },
     data() {
         return {
-            convocatorias: [],
+            elecciones: [],
             overlay: false,
-            convocatoria: [],
+            eleccion: [],
             mostrar: false,
             type: JSON.parse(localStorage.getItem("log")).type
         }
     },
     methods: {
-        async cargarConvocatorias(){
-            await this.axios.get('/convocatoria')
+        async cargarElecciones(){
+            await this.axios.get('/eleccion')
             .then(resp => {
-                this.convocatorias = resp.data;
+                this.elecciones = resp.data;
+                this.elecciones.splice(0,1);
                 this.overlay = false;
             }).
             catch(error => {
@@ -80,7 +80,7 @@ export default {
         eliminar(id){
             this.$swal.fire({
                     icon: 'question',
-                    title: '¿Está seguro de eliminar la convocatoria?',
+                    title: '¿Está seguro de eliminar la elección?',
                     showDenyButton: true,
                     showCancelButton: true,
                     confirmButtonText: 'SI',
@@ -88,25 +88,25 @@ export default {
             }).then((result) => {
                 /* Read more about isConfirmed, isDenied below */
                 if (result.isConfirmed) {
-                    this.axios.delete('/eliminar/convocatoria/'+id)
+                    this.axios.delete('/eliminar/eleccion/'+id)
                     .then(resp => {
                         console.log(resp);
-                        this.$swal.fire('ELIMINADO', 'Convocatoria eliminada correctamente', 'success');
-                        this.cargarConvocatorias();
+                        this.$swal.fire('ELIMINADO', 'Elección eliminada correctamente', 'success');
+                        this.cargarElecciones();
                     }).
                     catch(error => {
                         console.log(error);
                     });
                 } else if (result.isDenied) {
-                    this.$swal.fire('CANCELADO', 'No se eliminó la convocatoria', 'info')
+                    this.$swal.fire('CANCELADO', 'No se eliminó la elección', 'info')
                 }
             })
         },
-        getConvocatoria(id){
-            this.axios.get('/convocatoria/'+id)
+        getEleccion(id){
+            this.axios.get('/eleccion/'+id)
             .then(resp => {
-                this.convocatoria = resp.data;
-                console.log(this.convocatoria);
+                this.eleccion = resp.data;
+                console.log(this.eleccion);
                 this.overlay = true;
             })
             .catch(err => {
@@ -115,7 +115,7 @@ export default {
         }
     },
     async mounted() {
-        await this.cargarConvocatorias();
+        await this.cargarElecciones();
         await this.$swal.fire({
         title: "Cargando...",
         timer: 1000,

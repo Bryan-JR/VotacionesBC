@@ -1,7 +1,7 @@
 <template>
     <div class="about">
     <h2 class="title">POSTULADOS A {{ convocatoria.titulo }}</h2>
-    <v-parallax class="panel" max-height="800" src="../../public/img/fondo.png">
+    <v-parallax class="panel" src="../../public/img/fondo.png">
       <v-row>
         <VerPostulados :id="id" />
       </v-row>

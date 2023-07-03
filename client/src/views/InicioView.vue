@@ -20,7 +20,7 @@
               <h4 class="text-red">IMPORTANTE</h4>
               <p>
                 Para uso de nuestra aplicación web es necesario tener instalada la extensión de MetaMask, crear una billetera y tener Ethereum.
-                <a href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn/related">
+                <a href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn/related" target="__blank">
                   Descargar la extensión
                 </a>
               </p>

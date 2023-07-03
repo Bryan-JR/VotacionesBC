@@ -11,6 +11,7 @@
     "@mdi/font": "5.9.55",
     "axios": "^1.4.0",
     "core-js": "^3.8.3",
+    "ethers": "^6.6.2",
     "papaparse": "^5.4.1",
     "roboto-fontface": "*",
     "vue": "^3.2.13",
@@ -23,6 +24,9 @@
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
+    "@babel/plugin-transform-class-properties": "^7.22.5",
+    "@babel/plugin-transform-private-methods": "^7.22.5",
+    "@babel/plugin-transform-private-property-in-object": "^7.22.5",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-plugin-router": "~5.0.0",
