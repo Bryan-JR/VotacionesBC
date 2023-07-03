@@ -47,10 +47,10 @@ CREATE TABLE Administrador (
       ON UPDATE CASCADE
 );
 
-INSERT INTO usuario VALUES (1001032253, "Brayan", "Jimenez", "Ruiz", "CC", "324 569 3084", "Bj.1001032253");
+INSERT INTO usuario VALUES (***, "nombre", "ape1", "ap2", "CC", "324 569 3084", "*****");
 INSERT INTO administrador (identificacion) VALUES (1001032253);
 
-CREATE TABLE Estudiante (
+CREATE TABLE Estudiante 
   idEstudiante INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   identificacion INTEGER UNSIGNED NOT NULL,
   facultad VARCHAR(100) NULL,
