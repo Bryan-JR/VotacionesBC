@@ -69,9 +69,12 @@
                     <v-card title="PROPUESTAS">
                             <v-card-text>
                                {{ postu.propuestas }}
+                               <v-chip v-if="postu.estado_seleccion!=='Participando'">Postulado</v-chip>
+                                <v-chip color="primary" v-if="postu.estado_seleccion==='Participando'">Participando</v-chip>
+                                <v-chip color="primary" v-if="postu.estado_seleccion==='Rechazado'">Participando</v-chip>
                             </v-card-text>
-                            <v-card-actions v-if="conectado">
-                                <v-btn color="error">RECHAZAR</v-btn>
+                            <v-card-actions v-if="conectado&&postu.estado_seleccion!=='Participando'">
+                                <v-btn color="error" @click="actualizaCandidato(postu.idCandidato, 'Rechazado')">RECHAZAR</v-btn>
                                 <v-btn color="primary" @click="registrar(`${postu.nombre} ${postu.apellido1} ${postu.apellido2}`, postu.idCandidato)">ACEPTAR</v-btn>
                             </v-card-actions>
                         </v-card>
@@ -148,12 +151,33 @@ export default {
             const secondPart = this.wallets[0].substring(38, 42);
             this.shortAddress = `${firstPart}...${secondPart}`;
         },
+        async actualizaCandidato(id, estado){
+            await this.cargarCandidatos();
+            const obj = {
+            idCandidato: id,
+            idEleccion: this.idEle,
+            estado_seleccion: estado
+          }
+          const body = {
+            tabla: 'candidato',
+            keys: Object.keys(obj),
+            values: Object.values(obj)
+          }
+          await this.axios.put('/actualiza/'+obj.idCandidato, body)
+          .then(res => {
+            console.log(res);
+            this.cargarCandidatos();
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        },
         async getContract() {
             try {
                 const provider = await new ethers.BrowserProvider(window.ethereum);
                 const signer = await provider.getSigner();
-                const contractAddress = '0xb7a7782Fd8406871741F753aa81B53936206d4d5';
-                const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"string","name":"_name","type":"string"},{"internalType":"uint256","name":"_idProposal","type":"uint256"},{"internalType":"uint256","name":"_idElection","type":"uint256"}],"name":"addProposal","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"getChairPerson","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getLengthProposals","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getProposals","outputs":[{"components":[{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"idProposal","type":"uint256"},{"internalType":"uint256","name":"idElection","type":"uint256"},{"internalType":"uint256","name":"votesCount","type":"uint256"}],"internalType":"struct Vote.Proposal[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getVotesById","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"proposals","outputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"idProposal","type":"uint256"},{"internalType":"uint256","name":"idElection","type":"uint256"},{"internalType":"uint256","name":"votesCount","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint32","name":"index","type":"uint32"}],"name":"vote","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"voters","outputs":[{"internalType":"bool","name":"voted","type":"bool"},{"internalType":"uint256","name":"vote","type":"uint256"}],"stateMutability":"view","type":"function"}];
+                const contractAddress = '0x9C0a82905c733dFAC6B9eBd4212B8Bd67f23Ca1e';
+                const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"string","name":"_name","type":"string"},{"internalType":"uint256","name":"_idProposal","type":"uint256"},{"internalType":"uint256","name":"_idElection","type":"uint256"}],"name":"addProposal","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"getChairPerson","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getLengthProposals","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getProposals","outputs":[{"components":[{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"idProposal","type":"uint256"},{"internalType":"uint256","name":"idElection","type":"uint256"},{"internalType":"uint256","name":"votesCount","type":"uint256"}],"internalType":"struct Vote.Proposal[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_idElection","type":"uint256"}],"name":"getProposalsByIdElection","outputs":[{"components":[{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"idProposal","type":"uint256"},{"internalType":"uint256","name":"idElection","type":"uint256"},{"internalType":"uint256","name":"votesCount","type":"uint256"}],"internalType":"struct Vote.Proposal[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getVotesById","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"proposals","outputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"idProposal","type":"uint256"},{"internalType":"uint256","name":"idElection","type":"uint256"},{"internalType":"uint256","name":"votesCount","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint32","name":"idCandidato","type":"uint32"}],"name":"vote","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"voters","outputs":[{"internalType":"bool","name":"voted","type":"bool"},{"internalType":"uint256","name":"vote","type":"uint256"}],"stateMutability":"view","type":"function"}];
                 const contract = new ethers.Contract(contractAddress, contractABI, signer);
                 return contract;
             } catch (error) {
@@ -165,12 +189,25 @@ export default {
         async registrar(nombre, id){
             try {
                 if(this.idEle!=''){
-                    const conect = await this.getContract();
-                    const registro = await conect.addProposal(nombre, id, this.idEle);
-                    console.log(registro);
-                    const recibe = await registro.wait();
-                    console.log("Transacción minada en el bloque:", recibe.blockNumber);
-                    console.log("Estado de la transacción:", recibe.status);
+                    await this.$swal.fire({
+                        title: 'Realizando transacción...',
+                        timerProgressBar: true,
+                        showConfirmButton: false,
+                        didOpen: async () => {
+                            this.$swal.showLoading();
+                            const conect = await this.getContract();
+                            const registro = await conect.addProposal(nombre, id, this.idEle);
+                            const recibe = await registro.wait();
+                            await this.actualizaCandidato(id, "Participando");
+                            console.log("Transacción minada en el bloque:", recibe.blockNumber);
+                            console.log("Estado de la transacción:", recibe.status);
+                            this.$swal.update({title: "Registro Completo", text: "Se registró correctamente en la blockchain", icon: "success", showConfirmButton: true});
+                            this.$swal.hideLoading();
+                        }
+                    });
+                    
+                } else {
+                    this.$swal.fire({title: "ELECCIÓN NO SELECCIONADA", text: "Debe seleccionar una elección", icon: "error"});
                 }
             } catch (error) {
                 console.error(error);
@@ -198,3 +235,22 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+    .title{
+        text-align: center;
+        padding: 12px 0;
+        margin: 0 30px;
+        border-bottom: 3px solid #02a50d;
+    }
+    .panel{
+        margin-top: 20px;
+        margin-bottom: 50px;
+        padding: 50px;
+        max-width: 100%;
+        background-size: cover;
+        background-position: center; /* Centra la imagen en el contenedor */
+        position: sticky;
+        
+    }
+</style>

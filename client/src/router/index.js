@@ -41,6 +41,12 @@ const routes = [
     name: 'Elecciones',
     component: () => import('../views/EleccionesView.vue'),
   },
+  {
+    path: '/elecciones/:id',
+    name: 'VerEleccion',
+    component: () => import('../views/VerEleccion.vue'),
+    meta: { requiresAuth: true },
+  },
 ]
 
 const router = createRouter({

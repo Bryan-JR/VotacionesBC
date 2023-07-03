@@ -35,6 +35,11 @@ const candidatos = (idCon, ident, callback) => {
     const query = DAO.candidatos(idCon, ident);
     db.query(query, callback);
 };
+
+const candidatosByE = (id, callback) => {
+    const query = DAO.candidatosByE(id);
+    db.query(query, callback);
+};
  
 export const Model = {
     all: getAll,
@@ -44,4 +49,5 @@ export const Model = {
     remove: getRemove,
     dosTablas: getDosTablas,
     getCandidatos: candidatos,
+    getCanByE: candidatosByE,
 }

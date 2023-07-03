@@ -26,8 +26,12 @@ export default {
     border-bottom: 3px solid #02a50d;
   }
   .fila{
-    margin: 0;
-    padding: 0;
-    gap:20px;
-  }
+      margin: 20px 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+      align-items: center;
+      gap:20px;
+    }
 </style>

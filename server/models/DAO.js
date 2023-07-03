@@ -37,6 +37,10 @@ const getCandidatos = (idCon, ident) => {
     return `SELECT * FROM (SELECT * FROM (SELECT * FROM Candidato WHERE idConvocatoria = ${idCon})al1 INNER JOIN estudiante WHERE identificacion = ${ident == 1 ? 'al1.idEstudiante1' : 'al1.idEstudiante2'})al2 NATURAL JOIN usuario;`
 }
 
+const getCandidatoByEleccion = (id) => {
+    return `CALL getCandidatosByEleccion(${id})`;
+}
+
 
 export const DAO = {
     all: getAll,
@@ -46,5 +50,6 @@ export const DAO = {
     remove: getRemove,
     dosTablas: getNatural,
     candidatos: getCandidatos,
+    candidatosByE: getCandidatoByEleccion,
 }
 

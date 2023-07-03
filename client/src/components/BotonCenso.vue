@@ -129,4 +129,15 @@ export default {
 
 <style scoped>
 
+  .opcion{
+    padding:60px 5px !important;
+    cursor: pointer;
+  }
+  .opcion:hover{
+    background-color: #f0f0f0;
+  }
+  .texto{
+    color: #02a50d;
+    text-align: center;
+  }
 </style>

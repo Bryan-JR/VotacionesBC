@@ -164,6 +164,17 @@ const getCandidatos = async (req, res) => {
     });
 }
 
+const getCanByE = async (req, res) => {
+    const id = req.params.id;
+    Model.getCanByE(id, (err, resp) => {
+        if(err){
+            res.send("Error: "+err);
+        } else {
+            res.send(resp);
+        }
+    });
+}
+
 export const Controllers = {
     all: getAll,
     forId: getId,
@@ -175,4 +186,5 @@ export const Controllers = {
     dosTablas: getDosTablas,
     notificaciones: getNotificaciones,
     candidatos: getCandidatos,
+    candidatosByE: getCanByE,
 }

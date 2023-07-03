@@ -62,5 +62,25 @@ export default {
 </script>
 
 <style scoped>
+  .fila{
+    margin: 20px 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    gap:20px;
+  }
 
+  .opcion{
+    padding:60px 5px !important;
+    cursor: pointer;
+  }
+  .opcion:hover{
+    background-color: #f0f0f0;
+  }
+  .texto{
+    color: #02a50d;
+    text-align: center;
+  }
 </style>

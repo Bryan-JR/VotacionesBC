@@ -47,4 +47,14 @@
         position: sticky;
         
     }
+    .fila{
+      margin: 20px 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+      align-items: center;
+      gap:20px;
+    }
+
 </style>
