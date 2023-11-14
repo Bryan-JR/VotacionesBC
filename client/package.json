@@ -18,7 +18,7 @@
     "vue-axios": "^3.5.2",
     "vue-router": "^4.0.3",
     "vue-sweetalert2": "^5.0.5",
-    "vuetify": "^3.3.5",
+    "vuetify": "3.4",
     "webfontloader": "^1.0.0"
   },
   "devDependencies": {

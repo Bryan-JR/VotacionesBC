@@ -101,7 +101,6 @@ export default {
          
         await this.axios.post('/censo', await JSON.parse(localStorage.getItem('body')))
         .then(async res => {
-          localStorage.removeItem('body');
           console.log(res);
           let msg = await res.data;
           await this.$swal.fire({

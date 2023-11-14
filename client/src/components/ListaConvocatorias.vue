@@ -6,16 +6,16 @@
             color="green" 
             size="large" 
             append-icon="mdi-plus"
-            @click="convocatoria = [{idConvocatoria: '', title: '', descripcion: '', fecha_ini: '', fecha_fin: '', nCandidato: ''}];"
+            @click="abrir()"
         >
             AÑADIR CONVOCATORIA
             <v-overlay
-                activator="parent"
                 location-strategy="connected"
                 scroll-strategy="block"
                 v-model="overlay"
+                class="d-flex justify-center align-center"
             >
-                <FormConvocatoria @overlay="overlay=false" @listar="cargarConvocatorias()" :convocatoria="convocatoria[0]"/>
+                <FormConvocatoria @listar="cargarConvocatorias()" :convocatoria="convocatoria[0]"/>
             </v-overlay>
         </v-btn>
         <v-expansion-panels variant="inset" class="my-4" v-if="mostrar">
@@ -76,6 +76,10 @@ export default {
             const year = dateObj.getFullYear();
             
             return `${day}/${month}/${year}`;
+        },
+        abrir(){
+            this.convocatoria = [{idConvocatoria: '', title: '', descripcion: '', fecha_ini: '', fecha_fin: '', nCandidato: ''}];
+            this.overlay = !this.overlay;
         },
         eliminar(id){
             this.$swal.fire({

@@ -6,16 +6,16 @@
             color="green" 
             size="large" 
             append-icon="mdi-plus"
-            @click="eleccion = [{idEleccion: '', title: '', descripcion: '', fecha_ini: '', fecha_fin: ''}];"
+            @click="abrir()"
         >
             CREAR ELECCION
             <v-overlay
-                activator="parent"
                 location-strategy="connected"
                 scroll-strategy="block"
                 v-model="overlay"
+                class="d-flex justify-center align-center"
             >
-                <FormEleccion @overlay="overlay=false" @listar="cargarElecciones()" :eleccion="eleccion[0]"/>
+                <FormEleccion @listar="cargarElecciones()" :eleccion="eleccion[0]"/>
             </v-overlay>
         </v-btn>
         <v-expansion-panels variant="inset" class="my-4" v-if="mostrar">
@@ -101,6 +101,10 @@ export default {
                     this.$swal.fire('CANCELADO', 'No se eliminó la elección', 'info')
                 }
             })
+        },
+        abrir(){
+            this.eleccion = [{idEleccion: '', title: '', descripcion: '', fecha_ini: '', fecha_fin: ''}];
+            this.overlay = !this.overlay;
         },
         getEleccion(id){
             this.axios.get('/eleccion/'+id)
