@@ -1,5 +1,5 @@
 import { DAO } from "./DAO.js";
-import { db } from '../conection/db.js';
+import { db, email } from '../conection/db.js';
 
 const getAll = (data, callback) => {
     const query = DAO.all(data.tabla);
@@ -40,6 +40,20 @@ const candidatosByE = (id, callback) => {
     const query = DAO.candidatosByE(id);
     db.query(query, callback);
 };
+
+const sendEmail = (destino, asunto, msg) => {
+    email.sendMail({
+        from: 'votacionesblockchainunicordoba@gmail.com',
+        to: destino,
+        subject: asunto,
+        html: msg
+    }, (error, info) => {
+        if (error) {
+            return console.log(error);
+        }
+        console.log('Çorreo Enviado: '+ info.response);
+    })
+};
  
 export const Model = {
     all: getAll,
@@ -50,4 +64,5 @@ export const Model = {
     dosTablas: getDosTablas,
     getCandidatos: candidatos,
     getCanByE: candidatosByE,
+    sendEmail: sendEmail
 }

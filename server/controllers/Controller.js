@@ -104,9 +104,17 @@ const upCenso = async (req, res) => {
     }
 };
 
+function generaSerie(){
+    const chars = "1Q2W3E4R5T6Y7U8I9O0PAZSXDCFVGBHNJMKL".split('');
+    let serie = ''
+    for (let i = 0; i < 6; i++) {
+        serie += chars[Math.floor(Math.random()*chars.length)];
+    }
+    return serie;
+};
+
 const getLogin = async (req, res) => {
     const id = req.body.id;
-    const pass = req.body.pass;
     data.tabla = "usuario";
     data.keyId = "identificacion";
     Model.forId(id, data, (err, resp) => {
@@ -114,25 +122,24 @@ const getLogin = async (req, res) => {
             res.send(err);
         } else {
             if(resp.length==0){//Comprueba que el usuario existe
-                res.send("noExiste");
+                res.send({type: "noExiste"});
             } else {
-                if(resp[0].contraseña===pass){ //Se comparan las contraseñas para ver si concuerdan
-                    //Se comprueba si es administrador quien intenta iniciar sesión
-                    data.tabla = "administrador";
-                    Model.forId(id, data, (error, respu) => { //Respuesta de la tabla administrador
-                        if(error){
-                            res.send(error);
+                //Se comprueba si es administrador quien intenta iniciar sesión
+                data.tabla = "administrador";
+                let nSerie = generaSerie();
+                Model.forId(id, data, (error, respu) => { //Respuesta de la tabla administrador
+                    if(error){
+                        res.send(error);
+                    } else {
+                        Model.sendEmail(resp[0].correo, 'Prueba de envio de email', `Hola ${resp[0].nombre} ${resp[0].apellido1}, este es tu código de acceso: <strong>${nSerie}</strong>`);
+                        if(respu.length==0){
+                            res.send({type: 'inicio', correo: resp[0].correo, cod: nSerie});
                         } else {
-                            if(respu.length==0){
-                                res.send('inicio');
-                            } else {
-                                res.send('admin');
-                            }
+                            res.send({type: 'admin', correo: resp[0].correo, cod: nSerie});
                         }
-                    });
-                } else {
-                    res.send("incorrecta");
-                }
+                        console.log(resp[0]);
+                    }
+                });
             }
             
         }
