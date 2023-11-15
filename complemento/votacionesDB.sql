@@ -20,9 +20,12 @@ CREATE TABLE Usuario (
   apellido2 VARCHAR(100) NULL,
   tipo_documento VARCHAR(2) NULL,
   numero_celular VARCHAR(12) NULL,
-  contraseña VARCHAR(200) NULL,
+  correo VARCHAR(200) NULL,
+  billetera VARCHAR(200) NULL,
   PRIMARY KEY(identificacion)
 );
+
+select * from usuario;
 
 CREATE TABLE Convocatoria (
   idConvocatoria INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -47,10 +50,10 @@ CREATE TABLE Administrador (
       ON UPDATE CASCADE
 );
 
-INSERT INTO usuario VALUES (***, "nombre", "ape1", "ap2", "CC", "324 569 3084", "*****");
+INSERT INTO usuario VALUES (1001032253, "BRAYAN STEVEN", "JIMENEZ", "RUIZ", "CC", "324 569 3084", "brayanjiru14@gmail.com", "");
 INSERT INTO administrador (identificacion) VALUES (1001032253);
 
-CREATE TABLE Estudiante 
+CREATE TABLE Estudiante (
   idEstudiante INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
   identificacion INTEGER UNSIGNED NOT NULL,
   facultad VARCHAR(100) NULL,
