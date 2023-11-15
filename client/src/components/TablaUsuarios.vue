@@ -43,7 +43,8 @@ export default {
           {title: 'apellido2', key: 'apellido2'},
           {title: 'tipo_documento', key: 'tipo_documento'},
           {title: 'numero_celular', key: 'numero_celular'},
-          {title: 'contraseña', key: 'contraseña'}
+          {title: 'correo', key: 'correo'},
+          {title: 'billetera', key: 'billetera'}
           ],
         users: [],
         itemsPerPage: 5,

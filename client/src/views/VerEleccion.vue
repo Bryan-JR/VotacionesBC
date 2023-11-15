@@ -17,7 +17,7 @@
                     </v-card>
                 </v-col>
             </v-row>
-            <v-row>
+            <v-row v-if="wallCheck">
                 <cardVotar v-for="(candidato, i) in candidatos" :key="i" @cargar="cargarEleccion" :candidato="candidato" :voted="voted" :datos="candidatosBC[i]"/>
             </v-row>
         </v-parallax>
@@ -33,6 +33,8 @@ export default {
     data() {
         return {
             conectado: false,
+            wallCheck: false,
+            usuario: {},
             shortAddress: '',
             wallets: [],
             eleccion: {},
@@ -130,6 +132,41 @@ export default {
             } catch (error) {
                 console.error(error);
             }
+        },
+        async registraBilletera(){
+            this.usuario = JSON.parse(localStorage.getItem("usuario"));
+            console.log(this.usuario);
+            console.log(this.wallets[0]);
+            if(this.usuario.billetera===""){
+                const obj = {
+                    identificacion: this.usuario.identificacion,
+                    billetera: this.wallets[0]
+                }
+                const body = {
+                    tabla: 'usuario',
+                    keys: Object.keys(obj),
+                    values: Object.values(obj)
+                }
+                await this.axios.put('/actualiza/'+obj.identificacion, body)
+                .then(res => {
+                    console.log(res);
+                    this.wallCheck = true;
+                    this.usuario.billetera = this.wallets[0];
+                    localStorage.setItem("usuario", JSON.stringify(this.usuario));
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+            } else if(this.usuario.billetera!==this.wallets[0]){
+                this.wallCheck = false;
+                this.$swal.fire({
+                    icon: 'error',
+                    title: 'Tu billetera no coincide',
+                    text: 'La billetera con la que intentas votar no se encuentra enlazada con tu cuenta.'
+                })
+            } else {
+                this.wallCheck = true;
+            }
         }
     },
     computed:{
@@ -141,21 +178,23 @@ export default {
     },
     async mounted(){
         await this.connectWallet();
-        await this.cargarEleccion();
-        await this.$swal.fire({
-        title: "Cargando...",
-        timer: 1500,
-        timerProgressBar: true,
-        didOpen: () => {
-            this.$swal.showLoading()
+        await this.registraBilletera();
+        if(this.wallCheck){
+            await this.cargarEleccion();
+            await this.$swal.fire({
+            title: "Cargando...",
+            timer: 1500,
+            timerProgressBar: true,
+            didOpen: () => {
+                this.$swal.showLoading()
+            }
+            }).then((result) => {
+            /* Read more about handling dismissals below */
+            if (result.dismiss === this.$swal.DismissReason.timer) {
+                this.mostrar = true;
+            }
+            })
         }
-        }).then((result) => {
-        /* Read more about handling dismissals below */
-        if (result.dismiss === this.$swal.DismissReason.timer) {
-            this.mostrar = true;
-        }
-        })
-        
     }
 }
 </script>

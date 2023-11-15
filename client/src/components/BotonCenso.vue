@@ -62,7 +62,7 @@ export default {
               "apellido2": obj.apellido2,
               "tipo_documento": obj.tipo_documento,
               "numero_celular": obj.numero_celular,
-              "contraseña": obj.contraseña
+              "correo": obj.correo
             }));
             let vecEstudiantes = await this.datos.map(obj => ({
               "identificacion": obj.identificacion,
