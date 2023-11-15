@@ -43,7 +43,7 @@ const candidatosByE = (id, callback) => {
 
 const sendEmail = (destino, asunto, msg) => {
     email.sendMail({
-        from: 'votacionesblockchainunicordoba@gmail.com',
+        from: 'bjimenezruiz53@correo.unicordoba.edu.co',
         to: destino,
         subject: asunto,
         html: msg
