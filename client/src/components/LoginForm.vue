@@ -162,8 +162,7 @@ export default {
         if(this.credencial.type==="admin"){
           this.$swal.fire({
             icon: 'success',
-            title: 'Inicio como Admin correcto',
-            text: 'Puedes votar por un representante'
+            title: 'Inicio de Administrador correcto'
           });
           localStorage.setItem("log", JSON.stringify({log: true, type: "admin"}));
           await this.getUsuario();
@@ -172,8 +171,8 @@ export default {
         } else if (this.credencial.type==="inicio") {
           this.$swal.fire({
             icon: 'success',
-            title: 'Inicio como usuario correcto',
-            text: 'Puedes votar por un representante'
+            title: "¡Bienvenido estudiante!",
+            text: "Inicio de sesión correctamente."
           });
           localStorage.setItem("log", JSON.stringify({log: true, id: this.user, type: "usuario"}));
           await this.getUsuario();

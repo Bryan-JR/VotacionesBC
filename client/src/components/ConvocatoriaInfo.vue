@@ -1,10 +1,10 @@
 <template>
     <v-container class="cont">
-                <v-card style="width: 35%;">
-                    <v-card-title class="title">
+                <v-card style="width: 35%; gap:15px;" class="d-flex flex-column justify-center align-center">
+                    <v-card-title class="title w-75">
                         DESCRIPCIÓN
                     </v-card-title>
-                    <v-card-subtitle color="green"> {{ 'Desde '+formatFecha(convocatoria.fecha_ini)+' hasta '+formatFecha(convocatoria.fecha_fin)  }} </v-card-subtitle>
+                    <v-card-subtitle color="green" > {{ 'Desde '+formatFecha(convocatoria.fecha_ini)+' hasta '+formatFecha(convocatoria.fecha_fin)  }} </v-card-subtitle>
                     <v-card-text> {{ convocatoria.descripcion }} </v-card-text>
                 </v-card>
                 <v-container class="contenedor elevation-2">
@@ -26,14 +26,14 @@
                         :headers="headers"
                         :items="items"
                         :search="busca"
-                        items-per-page="2"
+                        items-per-page="4"
                     >
                         <template v-slot:item="{ item }"  >
-                           <div class="fila">
+                           <div class="fila" v-if="item.estudiante.id!==100&&item.estudiante.id!==idUser">
                                 <div class="w-75">
                                     <v-card
-                                        :title="item.columns.estudiante.nombre"
-                                        :subtitle="item.columns.estudiante.programa"
+                                        :title="item.estudiante.nombre"
+                                        :subtitle="item.estudiante.programa"
                                         class="elevation-0"
                                     >
                                     </v-card>
@@ -42,7 +42,7 @@
                                     <v-btn
                                         v-if="modo==0"
                                         color="blue-grey-lighten-4"
-                                        @click="enviarNotificacion(item.columns.estudiante.id)"
+                                        @click="enviarNotificacion(item.estudiante.id)"
                                     >
                                         Invitar
                                     </v-btn>

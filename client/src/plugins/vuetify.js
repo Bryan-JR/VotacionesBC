@@ -4,8 +4,7 @@ import 'vuetify/styles'
 
 // Vuetify
 import { createVuetify  } from 'vuetify'
-import { VExpansionPanels, VExpansionPanel, VExpansionPanelTitle, VExpansionPanelText, VOtpInput } from 'vuetify/lib/components/index.mjs';
-import { VDataTable, VDataTableVirtual } from 'vuetify/labs/components'
+import { VExpansionPanels, VExpansionPanel, VDataTable, VDataTableVirtual, VExpansionPanelTitle, VExpansionPanelText, VOtpInput } from 'vuetify/lib/components/index.mjs';
 
 export default createVuetify({
   components: {

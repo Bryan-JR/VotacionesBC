@@ -104,7 +104,7 @@ export default {
         async getContract() {
             try {
                 const provider = await new ethers.BrowserProvider(window.ethereum);
-                const contractAddress = '0x9C0a82905c733dFAC6B9eBd4212B8Bd67f23Ca1e';
+                const contractAddress = '0x70BF1E63663d89B86Ad844115DC6B30B45622782';
                 const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"string","name":"_name","type":"string"},{"internalType":"uint256","name":"_idProposal","type":"uint256"},{"internalType":"uint256","name":"_idElection","type":"uint256"}],"name":"addProposal","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"getChairPerson","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getLengthProposals","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getProposals","outputs":[{"components":[{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"idProposal","type":"uint256"},{"internalType":"uint256","name":"idElection","type":"uint256"},{"internalType":"uint256","name":"votesCount","type":"uint256"}],"internalType":"struct Vote.Proposal[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_idElection","type":"uint256"}],"name":"getProposalsByIdElection","outputs":[{"components":[{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"idProposal","type":"uint256"},{"internalType":"uint256","name":"idElection","type":"uint256"},{"internalType":"uint256","name":"votesCount","type":"uint256"}],"internalType":"struct Vote.Proposal[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getVotesById","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"proposals","outputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"idProposal","type":"uint256"},{"internalType":"uint256","name":"idElection","type":"uint256"},{"internalType":"uint256","name":"votesCount","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint32","name":"idCandidato","type":"uint32"}],"name":"vote","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"voters","outputs":[{"internalType":"bool","name":"voted","type":"bool"},{"internalType":"uint256","name":"vote","type":"uint256"}],"stateMutability":"view","type":"function"}];
                 const contract = new ethers.Contract(contractAddress, contractABI, provider);
                 return contract;
@@ -137,7 +137,7 @@ export default {
             this.usuario = JSON.parse(localStorage.getItem("usuario"));
             console.log(this.usuario);
             console.log(this.wallets[0]);
-            if(this.usuario.billetera===""){
+            if(this.usuario.billetera===""||this.usuario.billetera==null){
                 const obj = {
                     identificacion: this.usuario.identificacion,
                     billetera: this.wallets[0]

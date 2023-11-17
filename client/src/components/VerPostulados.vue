@@ -23,9 +23,10 @@
             <v-expansion-panel
                 v-for="(postu, i) in postulados1" :key="i"
             >
-            <v-expansion-panel-title> {{ `${postu.nombre} ${postu.apellido1} ${postu.apellido2} - ${postulados2[i].nombre} ${postulados2[i].apellido1} ${postulados2[i].apellido2}` }} </v-expansion-panel-title>
-            <v-expansion-panel-text> 
-                <v-row>
+            <v-expansion-panel-title v-if="postu.identificacion==100"> {{ `${postu.nombre} ${postu.apellido1} ${postu.apellido2}` }} </v-expansion-panel-title>
+            <v-expansion-panel-title v-else> {{ `${postu.nombre} ${postu.apellido1} ${postu.apellido2} - ${postulados2[i].nombre} ${postulados2[i].apellido1} ${postulados2[i].apellido2}` }} </v-expansion-panel-title>
+            <v-expansion-panel-text class="py-5"> 
+                <v-row v-if="postu.identificacion!==100">
                     <v-col>
                         <v-card title="ESTUDIANTE 1">
                             <v-card-text>
@@ -74,7 +75,7 @@
                                 <v-chip color="primary" v-if="postu.estado_seleccion==='Rechazado'">Participando</v-chip>
                             </v-card-text>
                             <v-card-actions v-if="conectado&&postu.estado_seleccion!=='Participando'">
-                                <v-btn color="error" @click="actualizaCandidato(postu.idCandidato, 'Rechazado')">RECHAZAR</v-btn>
+                                <v-btn color="error" v-if="postu.identificacion!==100" @click="actualizaCandidato(postu.idCandidato, 'Rechazado')">RECHAZAR</v-btn>
                                 <v-btn color="primary" @click="registrar(`${postu.nombre} ${postu.apellido1} ${postu.apellido2}`, postu.idCandidato)">ACEPTAR</v-btn>
                             </v-card-actions>
                         </v-card>
@@ -120,6 +121,7 @@ export default {
             await this.axios.get(`/get/candidatos/${this.idCon}/1`)
             .then(async resp => {
                 this.postulados1 = await resp.data;
+                console.log(this.postulados1);
             })
             .catch(err => {
                 console.error(err);
@@ -127,7 +129,6 @@ export default {
             await this.axios.get(`/get/candidatos/${this.idCon}/2`)
             .then( async resp => {
                 this.postulados2 = await resp.data;
-
             })
             .catch(err => {
                 console.error(err);
@@ -176,7 +177,7 @@ export default {
             try {
                 const provider = await new ethers.BrowserProvider(window.ethereum);
                 const signer = await provider.getSigner();
-                const contractAddress = '0x9C0a82905c733dFAC6B9eBd4212B8Bd67f23Ca1e';
+                const contractAddress = '0x70BF1E63663d89B86Ad844115DC6B30B45622782';
                 const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"string","name":"_name","type":"string"},{"internalType":"uint256","name":"_idProposal","type":"uint256"},{"internalType":"uint256","name":"_idElection","type":"uint256"}],"name":"addProposal","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"getChairPerson","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getLengthProposals","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getProposals","outputs":[{"components":[{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"idProposal","type":"uint256"},{"internalType":"uint256","name":"idElection","type":"uint256"},{"internalType":"uint256","name":"votesCount","type":"uint256"}],"internalType":"struct Vote.Proposal[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_idElection","type":"uint256"}],"name":"getProposalsByIdElection","outputs":[{"components":[{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"idProposal","type":"uint256"},{"internalType":"uint256","name":"idElection","type":"uint256"},{"internalType":"uint256","name":"votesCount","type":"uint256"}],"internalType":"struct Vote.Proposal[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"index","type":"uint256"}],"name":"getVotesById","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"proposals","outputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"uint256","name":"idProposal","type":"uint256"},{"internalType":"uint256","name":"idElection","type":"uint256"},{"internalType":"uint256","name":"votesCount","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint32","name":"idCandidato","type":"uint32"}],"name":"vote","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"voters","outputs":[{"internalType":"bool","name":"voted","type":"bool"},{"internalType":"uint256","name":"vote","type":"uint256"}],"stateMutability":"view","type":"function"}];
                 const contract = new ethers.Contract(contractAddress, contractABI, signer);
                 return contract;
