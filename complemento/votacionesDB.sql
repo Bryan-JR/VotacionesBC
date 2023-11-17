@@ -11,7 +11,6 @@ CREATE TABLE Eleccion (
   PRIMARY KEY(idEleccion)
 );
 
-INSERT INTO Eleccion VALUES (1, "Postulantes", "Postulantes", NOW(), NOW());
 
 CREATE TABLE Usuario (
   identificacion INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -25,7 +24,6 @@ CREATE TABLE Usuario (
   PRIMARY KEY(identificacion)
 );
 
-select * from usuario;
 
 CREATE TABLE Convocatoria (
   idConvocatoria INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -37,7 +35,6 @@ CREATE TABLE Convocatoria (
   PRIMARY KEY(idConvocatoria)
 );
 
-INSERT INTO convocatoria (titulo, descripcion, fecha_ini, fecha_fin, nCandidatos)  VALUES ("CONVOCATORIA PARA REPRESENTANTE ESTUDIANTIL", "Para hacer parte de la convocatoria debe cumplir con los siguientes requisitos: - - - -", "2023-06-06", "2023-07-06", 20);
 
 CREATE TABLE Administrador (
   idAdministrador INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -49,9 +46,6 @@ CREATE TABLE Administrador (
       ON DELETE RESTRICT
       ON UPDATE CASCADE
 );
-
-INSERT INTO usuario VALUES (1001032253, "BRAYAN STEVEN", "JIMENEZ", "RUIZ", "CC", "324 569 3084", "brayanjiru14@gmail.com", "");
-INSERT INTO administrador (identificacion) VALUES (1001032253);
 
 CREATE TABLE Estudiante (
   idEstudiante INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -73,7 +67,6 @@ CREATE TABLE Estudiante (
       ON DELETE RESTRICT
       ON UPDATE CASCADE
 );
-
 
 CREATE TABLE Candidato (
   idCandidato INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -106,21 +99,6 @@ CREATE TABLE Candidato (
       ON DELETE RESTRICT
       ON UPDATE CASCADE
 );
-SELECT * FROM candidato;
-SELECT * FROM ((SELECT idCandidato, idEstudiante1, idEstudiante2, concat(nombre," ",apellido1," ",apellido2) as nombre1, programa as programa1  FROM (SELECT * FROM (SELECT * FROM Candidato WHERE idEleccion = 2)al1 INNER JOIN estudiante WHERE identificacion = al1.idEstudiante1)al2 NATURAL JOIN usuario)al3
-NATURAL JOIN (SELECT idCandidato, idEstudiante1, idEstudiante2, concat(nombre," ",apellido1," ",apellido2) as nombre2, programa as programa2  FROM (SELECT * FROM (SELECT * FROM Candidato WHERE idEleccion = 2)al1 INNER JOIN estudiante WHERE identificacion = al1.idEstudiante2)al2 NATURAL JOIN usuario)al4);
-
-SELECT * FROM (SELECT * FROM (SELECT * FROM Candidato WHERE idConvocatoria = 1)al1 INNER JOIN estudiante WHERE identificacion = al1.idEstudiante2)al2 NATURAL JOIN usuario;
--- UPDATE Candidato SET idEleccion = 1, estado_seleccion = "Postulado" WHERE idCandidato = 5
-
-DELIMITER $
-CREATE PROCEDURE getCandidatosByEleccion(id INTEGER)
-BEGIN
-	SELECT * FROM ((SELECT idCandidato, idEstudiante1, idEstudiante2, concat(nombre," ",apellido1," ",apellido2) as nombre1, programa as programa1  FROM (SELECT * FROM (SELECT * FROM Candidato WHERE idEleccion = 2)al1 INNER JOIN estudiante WHERE identificacion = al1.idEstudiante1)al2 NATURAL JOIN usuario)al3
-	NATURAL JOIN (SELECT idCandidato, idEstudiante1, idEstudiante2, concat(nombre," ",apellido1," ",apellido2) as nombre2, programa as programa2  FROM (SELECT * FROM (SELECT * FROM Candidato WHERE idEleccion = 2)al1 INNER JOIN estudiante WHERE identificacion = al1.idEstudiante2)al2 NATURAL JOIN usuario)al4);
-END $
-DELIMITER ;
-CALL getCandidatosByEleccion(2);
 
 CREATE TABLE Notificacion (
   idNotificacion INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -174,11 +152,30 @@ CREATE TABLE Voto (
       ON UPDATE CASCADE
 );
 
+DELIMITER $
+CREATE PROCEDURE getCandidatosByEleccion(id INTEGER)
+BEGIN
+	SELECT * FROM ((SELECT idCandidato, idEstudiante1, idEstudiante2, concat(nombre," ",apellido1," ",apellido2) as nombre1, programa as programa1  FROM (SELECT * FROM (SELECT * FROM Candidato WHERE idEleccion = 2)al1 INNER JOIN estudiante WHERE identificacion = al1.idEstudiante1)al2 NATURAL JOIN usuario)al3
+	NATURAL JOIN (SELECT idCandidato, idEstudiante1, idEstudiante2, concat(nombre," ",apellido1," ",apellido2) as nombre2, programa as programa2  FROM (SELECT * FROM (SELECT * FROM Candidato WHERE idEleccion = 2)al1 INNER JOIN estudiante WHERE identificacion = al1.idEstudiante2)al2 NATURAL JOIN usuario)al4);
+END $
+DELIMITER ;
 
+DELIMITER $
+CREATE TRIGGER registraVotoBlanco
+AFTER INSERT ON convocatoria
+FOR EACH ROW
+BEGIN
+    -- Insertar una nueva fila en la tabla de postulaciones
+    INSERT INTO Candidato(idEleccion, idConvocatoria, idEstudiante1, idEstudiante2, propuestas, estado_seleccion, terminos)
+    VALUES (1, NEW.idConvocatoria, 100, 100, 'Es la elección por si no decide elegir uno de los representantes', 'Postulado', true);
+END $
+DELIMITER ;
 
+INSERT INTO usuario VALUES (1001032253, "BRAYAN STEVEN", "JIMENEZ", "RUIZ", "CC", "324 569 3084", "brayanjiru14@gmail.com", "");
+INSERT INTO administrador (identificacion) VALUES (1001032253);
+INSERT INTO usuario VALUES (100, "VOTO", "EN", "BLANCO", "", "", "", "");
+INSERT INTO estudiante(identificacion)  VALUES (100);
+INSERT INTO Eleccion VALUES (1, "Postulantes", "Postulantes", NOW(), NOW());
+INSERT INTO convocatoria (titulo, descripcion, fecha_ini, fecha_fin, nCandidatos)  VALUES ("CONVOCATORIA PARA REPRESENTANTE ESTUDIANTIL", "Para hacer parte de la convocatoria debe cumplir con los siguientes requisitos: - - - -", "2023-06-06", "2023-07-06", 20);
 
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'Qwe.123';
-select * from usuario;
-select * from usuario tb1 NATURAL JOIN estudiante tb2;
-select * from notificacion;
--- UPDATE notificacion SET leido = false WHERE idNotificacion = 1
